@@ -11,9 +11,10 @@ from user_agents import parse
 import xml.etree.ElementTree as ET
 from collections import Counter
 
+pd.options.mode.chained_assignment = None
+
 class NoOSStringError(Exception):
     pass
-
 
 
 class ParadataSessions:
@@ -25,8 +26,8 @@ class ParadataSessions:
 
         self.integrate_switchsessions()
 
-        sessions = self.dataframe[self.dataframe['Content'].str.startswith('<StartSessionEvent') & self.dataframe['respid']]
-        max_session_num = max(Counter(sessions['respid']).values())
+        sessions = self.dataframe[self.dataframe['Content'].str.startswith('<StartSessionEvent') & self.dataframe['KeyValue']]
+        max_session_num = max(Counter(sessions['KeyValue']).values())
         columns_names = ['respid', 'num_switches', 'num_sessions', 'total_duration', 'total_duration_seconds', 'first_device', 'last_device']
         if mode == 'switches':
             indices = ['device_duration_' + str(i) for i in range(1, max_session_num+1)]
@@ -41,10 +42,10 @@ class ParadataSessions:
         self.dataframe['time'] = self.dataframe['TimeStamp'].apply(self.to_timestamp)
         self.dataframe['time'].loc[self.dataframe['Content'].str.startswith('<StartSessionEvent ')] -= datetime.timedelta(seconds=1)
         self.dataframe = self.dataframe.sort_values('time')
-        self.dataframe['respid'].replace('', np.nan, inplace=True)
-        self.dataframe.dropna(subset=['respid'], inplace=True)
+        self.dataframe['KeyValue'].replace('', np.nan, inplace=True)
+        self.dataframe.dropna(subset=['KeyValue'], inplace=True)
 
-        self.groups = self.dataframe.groupby('respid', as_index=False)
+        self.groups = self.dataframe.groupby('KeyValue', as_index=False)
         print('Groups: ', str(len(self.groups)))
         
     def integrate_switchsessions(self):
@@ -52,10 +53,9 @@ class ParadataSessions:
         count = 0
         for switch in switches.iloc:
             old_id = '{' + switch['Content'].split('"')[1] + '}'
-            print(old_id)
-#             print(self.dataframe.loc[(self.dataframe['v1'] == switch['v1']) & (~self.dataframe['v4'].str.startswith('<SwitchSessionEvent')), 'respid'])
-            respid = self.dataframe[self.dataframe['0'] == old_id]['respid'].iloc[0]
-            self.dataframe.loc[(self.dataframe['0'] == switch['0']) & (~self.dataframe['Content'].str.startswith('<SwitchSessionEvent')), 'respid'] = respid
+            # print(old_id)
+            respid = self.dataframe[self.dataframe['0'] == old_id]['KeyValue'].iloc[0]
+            self.dataframe.loc[(self.dataframe['0'] == switch['0']) & (~self.dataframe['Content'].str.startswith('<SwitchSessionEvent')), 'KeyValue'] = respid
             count += 1
         print('%d switch sessions added.' % count)
 
@@ -101,7 +101,7 @@ class ParadataSessions:
         num_switches = 0
         
         last_device = self.get_device(df.loc[startsession_indices[0]]['Content'])
-        respid = df.loc[0]['respid']
+        respid = df.loc[0]['KeyValue']
         self.output.loc[self.output.shape[0]] = {'respid': respid, 'first_device': last_device}
         delta = datetime.timedelta()
 

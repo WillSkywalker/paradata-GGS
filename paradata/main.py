@@ -7,7 +7,7 @@ class ParadataFile:
 
     def __init__(self, input_filename, output_filename, sep=None, mode='simple', tablet=True):
         if sep:
-            self.data = pd.read_csv(input_filename, sep=sep)
+            self.data = pd.read_csv(input_filename, sep=sep, on_bad_lines="warn")
         else:
             self.data = pd.read_csv(input_filename, on_bad_lines="warn")
         
@@ -16,13 +16,12 @@ class ParadataFile:
 
 
     def to_csv(self):
-        self.session_sum_time_device()
-        print(self.output)
-        print(self.output['device_duration_1'])
-        print(self.output['device_duration_1_seconds'])
-        self.output.dropna(how='all', axis=1, inplace=True)
-        self.output.fillna('.')
-        self.output.to_csv(self.filename)
+        self.parser.session_sum_time_device()
+        output = self.parser.output
+
+        # output.dropna(how='all', axis=1, inplace=True)
+        output.fillna('.')
+        output.to_csv(self.filename)
 
 
 
