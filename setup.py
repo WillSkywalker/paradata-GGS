@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="paradata",
-    version="0.1.0",
+    version="0.1.1",
     packages=find_packages(exclude=['tests*']),
 
     install_requires=['pandas',
@@ -13,11 +13,16 @@ setup(
         # If any package contains *.txt or *.rst files, include them:
         '': ['*.md', '*.rst'],
     },
+    entry_points={
+        'console_scripts': [
+            'paradata = paradata.main:main',
+        ]
+    },
 
     # metadata for upload to PyPI
     author="Xu Xiao",
     author_email="cxbats@gmail.com",
-    description="A backup tool for renren. You can backup any of your friends' timeline and photos to local with it.",
+    description="A analysis tool for Blaise paradata.",
     license="Apache 2.0",
     url="https://github.com/WillSkywalker/paradata-GGS",   # project home page, if any
     keywords='paradata survey ggp blaise',
@@ -41,7 +46,8 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
-        'Programming Language :: Python :: 3.11',        
-        'Programming Language :: Python :: 3.12',        
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
     ],
 )
