@@ -19,7 +19,7 @@ class NoOSStringError(Exception):
 
 class ParadataSessions:
     
-    def __init__(self, df, mode, tablet):
+    def __init__(self, df, mode='simple', tablet=False):
         self.dataframe = df
         self.mode = mode
         self.tablet = tablet
