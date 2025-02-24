@@ -1,8 +1,12 @@
 from setuptools import setup, find_packages
 
+from pathlib import Path
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
+
 setup(
     name="paradata",
-    version="0.1.6",
+    version="0.1.7",
     packages=find_packages(exclude=['tests*']),
 
     install_requires=['pandas',
@@ -23,6 +27,8 @@ setup(
     author="Xu Xiao",
     author_email="cxbats@gmail.com",
     description="A analysis tool for Blaise paradata.",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     license="Apache 2.0",
     url="https://github.com/WillSkywalker/paradata-GGS",   # project home page, if any
     keywords='paradata survey ggp blaise',
